@@ -1,17 +1,89 @@
-# React + Vite
+# 🚀 PROJECT 1 — 3D Interactive Solar System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+(React + Three.js / React Three Fiber)
 
-Currently, two official plugins are available:
+## 🌍 Project Vision
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+An immersive, interactive 3D solar system built for the web that allows users to explore planets in real-time. Users can rotate around space, watch planets orbit the sun with realistic motion, click on planets to view educational data, and smoothly zoom between celestial bodies.
 
-## React Compiler
+This project demonstrates advanced frontend engineering skills including 3D rendering, animation systems, camera control logic, performance optimization, and UI state synchronization between 3D scenes and React components.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+ This is not a demo — this is a polished interactive experience.$
 
-## Expanding the ESLint configuration
+### ✅ Core Features (MVP)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-# SolarSystem
+ * Render Sun + 8 planets in 3D
+
+ * Realistic orbital rotation animation
+
+ * Camera orbit controls
+
+ * Click detection on planets
+
+ * Slide-in detail panel
+
+ * Smooth zoom-to-planet animation
+
+ * Responsive layout
+
+ * Clean modern UI
+
+### 🔥 Advanced Features (Internship-Level)
+
+ * Realistic orbital speed ratios
+
+ * Adjustable time scale (speed up / slow down)
+
+ * Tooltip hover preview
+
+ * Light + shadow realism
+
+ * Background starfield shader
+
+ * Planet texture maps
+
+ * Mobile gesture optimization
+
+ * Accessibility support (keyboard focus + fallback UI)
+
+ ### 📦 Recommended Libraries
+
+* ``@react-three/fiber``
+
+* ``@react-three/drei``
+
+* ``three``
+
+* ``react-spring``
+
+* ``zustand`` (state management)
+
+* ``leva`` (debug control panel)
+
+* ``framer-motion`` (UI animation)
+
+### 🎨 UI/UX Considerations
+
+* Dark space theme
+
+* Subtle glassmorphism panel
+
+* Smooth transitions only (no abrupt jumps)
+
+* Minimal text inside 3D
+
+* Clear back button
+
+* Mobile swipe-friendly
+
+* Always maintain 60fps
+
+### ⚠️ Possible Challenges
+| Problem                    | Solution                                 |
+| -------------------------- | ---------------------------------------- |
+| Performance lag            | Reduce geometry segments                 |
+| Camera jitter              | Use controlled animation state           |
+| Orbit math confusion       | Separate orbital logic from render logic |
+| Click detection inaccurate | Adjust raycaster threshold               |
+| Mobile lag                 | Reduce shadow calculations               |
+
