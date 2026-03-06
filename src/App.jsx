@@ -1,9 +1,9 @@
-import React from 'react'
+import { SolarScene } from "./components/scene/SolarScene"
 
-export const App = () => {
-  return (
-    <>
-    <h1>Solar System</h1>
-    </>
-  )
+export const App = () =>{
+    return(
+        <>
+         <SolarScene />
+        </>
+    )
 }
