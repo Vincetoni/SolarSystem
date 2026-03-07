@@ -1,77 +1,106 @@
-import React, { useRef, useMemo , useState} from 'react';
-import { useFrame } from '@react-three/fiber';
-import { Sphere, Html, Ring } from '@react-three/drei';
-import * as THREE from 'three';
+import { useMemo, useRef, useState } from 'react'
+import { useFrame } from '@react-three/fiber'
+import { Html, Ring, Sphere } from '@react-three/drei'
+import * as THREE from 'three'
 
-function Planet({ data, speedMultiplier, isPaused, onClick }) {
-  const groupRef = useRef();        // Moves around Sun
-  const planetRef = useRef();       // Spins on axis
-  const moonRef = useRef();         // Moves around Earth
-  
-  const startAngle = useMemo(() => Math.random() * Math.PI * 2, []);
-  const moonStartAngle = useMemo(() => Math.random() * Math.PI * 2, []);
+function seededAngle(seed) {
+  const source = seed.split('').reduce((total, char) => total + char.charCodeAt(0), 0)
+  const normalized = Math.abs(Math.sin(source * 12.9898)) % 1
+  return normalized * Math.PI * 2
+}
+
+function Planet({
+  data,
+  speedMultiplier,
+  isPaused,
+  isFocused,
+  onClick,
+  onFocusPositionChange,
+}) {
+  const groupRef = useRef(null)
+  const planetRef = useRef(null)
+  const moonRef = useRef(null)
+  const [isHovered, setIsHovered] = useState(false)
+  const startAngle = useMemo(() => seededAngle(data.name), [data.name])
+  const moonStartAngle = useMemo(() => seededAngle(`${data.name}-moon`), [data.name])
 
   useFrame((state, delta) => {
-    if (isPaused) return;
-    if (!groupRef.current || !planetRef.current) return;
-
-    const time = state.clock.elapsedTime;
-    const speed = data.speed * speedMultiplier * 0.1;
-    const angle = startAngle + time * speed;
-    
-    groupRef.current.position.x = Math.cos(angle) * data.distance;
-    groupRef.current.position.z = Math.sin(angle) * data.distance;
-    
-    // Earth spins
-    planetRef.current.rotation.y += delta * 0.5;
-    
-    // Moon orbits Earth
-    if (data.hasMoon && moonRef.current) {
-      const moonAngle = moonStartAngle + time * 2;  // 2 = moon speed
-      moonRef.current.position.x = Math.cos(moonAngle) * 2;
-      moonRef.current.position.z = Math.sin(moonAngle) * 2;
+    if (!groupRef.current || !planetRef.current) {
+      return
     }
-  });
 
-  const handleClick = (e) => {
-    e.stopPropagation();
-    onClick(data, groupRef.current.position);
-  };
+    if (!isPaused) {
+      const time = state.clock.elapsedTime
+      const orbitSpeed = data.speed * speedMultiplier * 0.1
+      const angle = startAngle + time * orbitSpeed
+
+      groupRef.current.position.x = Math.cos(angle) * data.distance
+      groupRef.current.position.z = Math.sin(angle) * data.distance
+      planetRef.current.rotation.y += delta * 0.7
+
+      if (data.hasMoon && moonRef.current) {
+        const moonAngle = moonStartAngle + time * 2
+        moonRef.current.position.x = Math.cos(moonAngle) * 2
+        moonRef.current.position.z = Math.sin(moonAngle) * 2
+      }
+    }
+
+    if (isFocused && onFocusPositionChange) {
+      const { x, y, z } = groupRef.current.position
+      onFocusPositionChange([x, y, z])
+    }
+  })
+
+  const handleClick = (event) => {
+    event.stopPropagation()
+    const { x, y, z } = groupRef.current.position
+    onClick(data, [x, y, z])
+  }
 
   return (
     <group ref={groupRef}>
-      {/* Everything inside here moves together */}
-      <group onClick={handleClick}>
-        
-        {/* Earth */}
-        <Sphere ref={planetRef} args={[data.radius, 32, 32]}>
-          <meshStandardMaterial color={data.color} />
+      <group
+        onClick={handleClick}
+        onPointerOver={() => setIsHovered(true)}
+        onPointerOut={() => setIsHovered(false)}
+      >
+        <Sphere ref={planetRef} args={[data.radius, 32, 32]} castShadow receiveShadow>
+          <meshStandardMaterial
+            color={data.color}
+            emissive={isFocused ? data.color : '#000000'}
+            emissiveIntensity={isFocused ? 0.22 : 0}
+            roughness={0.95}
+            metalness={0.06}
+          />
         </Sphere>
-
-        {/* Rings */}
         {data.hasRings && (
-          <Ring args={[data.radius * 1.4, data.radius * 2.2, 64]} rotation={[-Math.PI / 2, 0, 0]}>
-            <meshStandardMaterial color="#C4A484" transparent opacity={0.6} side={THREE.DoubleSide} />
+          <Ring
+            args={[data.radius * 1.5, data.radius * 2.35, 64]}
+            rotation={[-Math.PI / 2.4, 0, 0]}
+          >
+            <meshStandardMaterial
+              color="#ccb28a"
+              transparent
+              opacity={0.72}
+              side={THREE.DoubleSide}
+            />
           </Ring>
         )}
-
-        {/* Label */}
-        <Html distanceFactor={10}>
-          <div style={{color: 'white', fontSize: '12px'}}>{data.name}</div>
-        </Html>
-
-        {/* Moon - INSIDE the group, not outside */}
+        {(isHovered || isFocused) && (
+          <Html position={[0, data.radius + 0.95, 0]} center distanceFactor={9}>
+            <div className="planet-label">{data.name}</div>
+          </Html>
+        )}
         {data.hasMoon && (
           <group ref={moonRef}>
-            <Sphere args={[0.27, 16, 16]}>
-              <meshStandardMaterial color="#C0C0C0" />
+            <Sphere args={[0.27, 16, 16]} castShadow>
+              <meshStandardMaterial color="#d6d6d6" roughness={1} />
             </Sphere>
           </group>
         )}
-        
       </group>
     </group>
-  );
+  )
 }
 
 export default Planet
