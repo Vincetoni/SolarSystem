@@ -1,32 +1,28 @@
-import SpeedControl from './SpeedControl'
-import CameraControls from './CameraControls'
+export default function ControlPanel({ speed, setSpeed, isPaused, setIsPaused }) {
 
-export default function ControlPanel({
-  speed,
-  setSpeed,
-  isPaused,
-  setIsPaused,
-  selectedPlanet,
-  focusedPlanet,
-  focusSelectedPlanet,
-  resetFocus,
-}) {
   return (
-    <section className="control-panel">
+    <div className="control-panel">
+
       <button
         onClick={() => setIsPaused(!isPaused)}
         className="control-btn"
-        type="button"
       >
-        {isPaused ? 'Resume Motion' : 'Pause Motion'}
+        {isPaused ? "Resume" : "Pause"}
       </button>
-      <SpeedControl speed={speed} setSpeed={setSpeed} />
-      <CameraControls
-        selectedPlanet={selectedPlanet}
-        focusedPlanet={focusedPlanet}
-        focusSelectedPlanet={focusSelectedPlanet}
-        resetFocus={resetFocus}
-      />
-    </section>
+
+      <div className="slider-group">
+        <label>Speed</label>
+
+        <input
+          type="range"
+          min="0"
+          max="5"
+          step="0.1"
+          value={speed}
+          onChange={(e) => setSpeed(Number(e.target.value))}
+        />
+      </div>
+
+    </div>
   )
 }
